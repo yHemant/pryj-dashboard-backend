@@ -38,15 +38,27 @@ export const formatDate = (dateVal) => {
     
     // If Excel stored it as a serial number (days since Jan 1, 1900)
     if (typeof dateVal === 'number') {
-        const date = new Date(Math.round((dateVal - 25569) * 86400 * 1000));
-        return date.toISOString().split('T')[0];
+        const date = new Date(Math.round((dateVal - 25569) * 86400 * 1000) + 43200000);
+        const y = date.getUTCFullYear();
+        const m = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const d = String(date.getUTCDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
     }
     
     // If it's a standard Date object or string
     try {
+        if (dateVal instanceof Date) {
+            const y = dateVal.getFullYear();
+            const m = String(dateVal.getMonth() + 1).padStart(2, '0');
+            const d = String(dateVal.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        }
         const d = new Date(dateVal);
         if (!isNaN(d.getTime())) {
-            return d.toISOString().split('T')[0];
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
         }
     } catch (e) {
         return '1970-01-01';
